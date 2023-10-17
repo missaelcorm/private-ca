@@ -1,0 +1,11 @@
+version: '3'
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+      - "443:443"
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./root-ca/private/server.key:/etc/nginx/certs/server.key
+      - ./root-ca/server-final.crt:/etc/nginx/certs/server.crt
