@@ -256,27 +256,27 @@ Create a `config` directory and inside an `nginx.conf`, like this:
 ```
 And add the following:
 ```conf
-events {}
+server {
+    listen 80;
+    server_name missaelcorp.com;
+    return 301 https://$host$request_uri;
+}
 
-http{
-    server {
-        listen 80;
-        server_name missaelcorp.com;
-        return 301 https://$host$request_uri;
+server {
+    listen 443 ssl;
+    server_name missaelcorp.com;
+
+    ssl_certificate /etc/nginx/certs/server.crt;
+    ssl_certificate_key /etc/nginx/certs/server.key;
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
     }
 
-    server {
-        listen 443 ssl;
-        server_name missaelcorp.com;
-
-        ssl_certificate /etc/nginx/certs/server.crt;
-        ssl_certificate_key /etc/nginx/certs/server.key;
-
-        location / {
-            # Your Nginx configuration goes here
-        }
+    location = /50x.html {
+        root   /usr/share/nginx/html;
     }
-
 }
 ```
 
@@ -290,7 +290,7 @@ services:
       - "8080:80"
       - "443:443"
     volumes:
-      - ./config/nginx.conf:/etc/nginx/nginx.conf
+      - ./config/nginx.conf:/etc/nginx/conf.d/default.conf
       - ./root-ca/private/server.key:/etc/nginx/certs/server.key
       - ./root-ca/server-final.crt:/etc/nginx/certs/server.crt
 ```
